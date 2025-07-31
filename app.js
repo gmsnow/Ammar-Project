@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const cors = require('cors');
-const Routes = require('../Ammar-project/routes/routes');
+const Routes = require('./routes/routes');
 app.use(express.json());
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
