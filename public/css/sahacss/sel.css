@@ -1,0 +1,52 @@
+.result-item{
+    background-color: #f1f1f1;
+    display: flexbox;
+    margin: 20;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    font-family: 'Cairo';
+    
+}
+.button.new-query{
+    color: rgb(151, 70, 70);
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: #007bff;
+}
+.data-section{
+    padding: 20px;
+    margin-bottom: 20px;
+    font-family: 'Cairo';
+}
+.data-section div{
+    margin-bottom: 10px;
+    font-family: 'Cairo';
+}
+
+.data-button-section{
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: #007bff;
+    font-family: 'Cairo';
+}
+.result-name{
+    color: rgb(21, 22, 22);
+    font-family: 'Cairo';
+}
+.result-date1{
+    color: rgb(21, 22, 22);
+    font-family: 'Cairo';
+}
+.result-date2{
+    color: rgb(21, 22, 22);
+    font-family: Traditional Arabic, sans-serif;
+}

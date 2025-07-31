@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الإجازات المرضية - إضافة إجازة جديدة</title>
+    
+    <!-- Bootstrap 5.3 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1a5f7a;
+            --primary-dark: #0d4a6b;
+            --primary-light: #2a7a9a;
+            --secondary-color: #2c3e50;
+            --accent-color: #3498db;
+            --background-color: #f8f9fa;
+            --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-background: #ffffff;
+            --text-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.12);
+            --shadow-heavy: 0 8px 30px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--accent-color) 100%);
+            --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-warning: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --gradient-danger: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        * {
+            font-family: 'Noto Sans Arabic', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+            box-shadow: var(--shadow-heavy);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+        }
+
+        .header .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-white) !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .nav-tabs {
+            border-bottom: none;
+            margin-top: 10px;
+        }
+
+        .header .nav-tabs .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-bottom: 3px solid transparent;
+            background: none;
+            padding: 12px 20px;
+            transition: var(--transition);
+            font-weight: 500;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin: 0 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header .nav-tabs .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+
+        .header .nav-tabs .nav-link:hover::before {
+            transform: translateY(0);
+        }
+
+        .header .nav-tabs .nav-link:hover {
+            background-color: rgba(255,255,255,0.15);
+            border-bottom-color: var(--text-white);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header .nav-tabs .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-bottom-color: var(--text-white);
+            color: var(--text-white);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .user-info .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .user-info i {
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info i:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Floating Navigation Toggle */
+        .nav-toggle {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 1040;
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-heavy);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: var(--gradient-success);
+        }
+
+        .nav-toggle:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        /* Floating Navigation Menu */
+        .floating-nav {
+            position: fixed;
+            top: 50%;
+            right: 100px;
+            transform: translateY(-50%) translateX(100%);
+            z-index: 1035;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-heavy);
+            padding: 20px;
+            min-width: 280px;
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .floating-nav.show {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .floating-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(26, 95, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(52, 152, 219, 0.1) 0%, transparent 50%);
+            border-radius: var(--border-radius-lg);
+            z-index: -1;
+        }
+
+        .floating-nav-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(26, 95, 122, 0.1);
+        }
+
+        .floating-nav-header h5 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .floating-nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .floating-nav-menu .menu-section {
+            padding: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(26, 95, 122, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .floating-nav-menu .menu-item {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+            margin: 5px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-nav-menu .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+            z-index: -1;
+            border-radius: var(--border-radius);
+        }
+
+        .floating-nav-menu .menu-item:hover::before {
+            width: 100%;
+        }
+
+        .floating-nav-menu .menu-item:hover {
+            color: var(--text-white);
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .floating-nav-menu .menu-item.active {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .floating-nav-menu .menu-item i {
+            width: 20px;
+            margin-left: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 140px;
+            padding: 30px;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: var(--card-background);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-header {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            margin: -30px -30px 30px -30px;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .form-header h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .form-section:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-light);
+        }
+
+        .form-section-header {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .form-section-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--card-background);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(26, 95, 122, 0.25);
+            outline: none;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: left 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-left: 2.5rem;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Custom Modal Styles */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .custom-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-background);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-heavy);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            padding: 20px 25px;
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .modal-header .close-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--text-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-header .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 30px 25px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .modal-icon.success {
+            color: var(--success-color);
+        }
+
+        .modal-icon.warning {
+            color: var(--warning-color);
+        }
+
+        .modal-icon.error {
+            color: var(--danger-color);
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text-dark);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .modal-btn-primary {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: var(--text-white);
+        }
+
+        .modal-btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: var(--text-white);
+        }
+
+        .modal-btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: var(--text-white);
+        }
+
+        .modal-btn-secondary {
+            background: #6c757d;
+            color: var(--text-white);
+        }
+
+        .modal-btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            color: var(--text-white);
+        }
+
+        .modal-btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            color: var(--text-white);
+        }
+
+        .modal-btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: var(--text-white);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--text-white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--text-white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 95, 122, 0.4);
+            color: var(--text-white);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: var(--text-white);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            color: var(--text-white);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: var(--text-white);
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            color: var(--text-white);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 2px solid var(--border-color);
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            margin: 0 10px;
+            min-width: 150px;
+        }        /* ===== RESPONSIVE DESIGN ===== */
+        
+        /* Desktop Large (1400px+) */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
+            
+            .main-content {
+                padding: 40px;
+            }
+            
+            .form-section {
+                padding: 30px;
+            }
+            
+            .form-control {
+                font-size: 1rem;
+                padding: 12px 16px;
+            }
+            
+            .btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Desktop (1200px - 1399px) */
+        @media (max-width: 1399px) and (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+            
+            .main-content {
+                padding: 35px;
+            }
+            
+            .form-section {
+                padding: 25px;
+            }
+        }
+
+        /* Laptop (992px - 1199px) */
+        @media (max-width: 1199px) and (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+            
+            .main-content {
+                padding: 30px 25px;
+            }
+            
+            .form-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .form-control {
+                font-size: 0.95rem;
+                padding: 10px 14px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .floating-nav {
+                min-width: 240px;
+                right: 75px;
+            }
+            
+            .floating-nav-menu .menu-item {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Tablet (768px - 991px) */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+            
+            .main-content {
+                padding: 25px 20px;
+                margin-top: 100px;
+            }
+            
+            .form-section {
+                padding: 18px;
+                margin-bottom: 18px;
+            }
+            
+            .form-section h3 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+            
+            .form-control {
+                font-size: 0.9rem;
+                padding: 9px 12px;
+            }
+            
+            .btn {
+                padding: 9px 18px;
+                font-size: 0.9rem;
+                margin: 5px;
+            }
+            
+            .row .col-md-6 {
+                margin-bottom: 15px;
+            }
+            
+            .floating-nav {
+                right: 70px;
+                min-width: 220px;
+                padding: 15px;
+            }
+            
+            .floating-nav-menu .menu-item {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Mobile Large (576px - 767px) */
+        @media (max-width: 767px) and (min-width: 576px) {
+            .container {
+                max-width: 540px;
+                padding: 0 15px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+                margin-top: 120px;
+            }
+            
+            .form-section {
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 10px;
+            }
+            
+            .form-section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 12px;
+                text-align: center;
+            }
+            
+            .form-control {
+                font-size: 0.85rem;
+                padding: 8px 10px;
+                margin-bottom: 10px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                margin: 3px;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .row .col-md-6 {
+                margin-bottom: 12px;
+            }
+            
+            .floating-nav {
+                right: 60px;
+                min-width: 200px;
+                padding: 12px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .floating-nav-menu .menu-item {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .header {
+                padding: 15px 0;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Mobile Small (أقل من 576px) */
+        @media (max-width: 575px) {
+            .container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .main-content {
+                padding: 15px 10px;
+                margin-top: 130px;
+            }
+            
+            .form-section {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+            }
+            
+            .form-section h3 {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            
+            .form-control {
+                font-size: 0.8rem;
+                padding: 7px 8px;
+                margin-bottom: 8px;
+            }
+            
+            .btn {
+                padding: 7px 14px;
+                font-size: 0.8rem;
+                margin: 2px;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            
+            .row .col-md-6 {
+                margin-bottom: 10px;
+            }
+            
+            .floating-nav {
+                right: 55px;
+                min-width: 180px;
+                padding: 10px;
+            }
+            
+            .floating-nav-menu .menu-item {
+                padding: 5px 6px;
+                font-size: 0.75rem;
+            }
+            
+            .header {
+                padding: 10px 0;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .nav-toggle {
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Extra Small Mobile (أقل من 480px) */
+        @media (max-width: 479px) {
+            .container {
+                padding: 0 8px;
+            }
+            
+            .main-content {
+                padding: 12px 8px;
+                margin-top: 140px;
+            }
+            
+            .form-section {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .form-section h3 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+            
+            .form-control {
+                font-size: 0.75rem;
+                padding: 6px 7px;
+                margin-bottom: 6px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+                margin: 1px;
+                margin-bottom: 6px;
+            }
+            
+            .floating-nav {
+                right: 50px;
+                min-width: 160px;
+                padding: 8px;
+            }
+            
+            .floating-nav-menu .menu-item {
+                padding: 4px 5px;
+                font-size: 0.7rem;
+            }
+            
+            .header h1 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-width: 1024px) and (orientation: landscape) {
+            .main-content {
+                margin-top: 80px;
+            }
+            
+            .floating-nav {
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .form-control {
+                border-width: 0.5px;
+            }
+            
+            .btn {
+                border-width: 0.5px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .floating-nav,
+            .nav-toggle,
+            .header {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-top: 0 !important;
+                padding: 20px !important;
+            }
+            
+            .form-section {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+        }
+
+        .action-buttons .btn {
+                margin: 5px;
+                min-width: 120px;
+            }
+        
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <link href="css/main/modern-styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <%- include ('./nav/navUser') %>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="form-container fade-in">
+                <div class="form-header">
+                    <h3>
+                        <i class="fas fa-plus-circle me-2"></i>
+                        إضافة إجازة مرضية جديدة
+                    </h3>
+                </div>
+
+                <form id="leaveForm">
+                    <!-- Leave Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-info-circle me-2"></i>
+                            LEAVE INFORMATION - معلومات الإجازة
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">رمز الإجازة<br><small>Leave ID</small></label>
+                                        <input type="text" class="form-control" id="leaveId" maxlength="10" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">تاريخ إصدار التقرير<br><small>Issue Date</small></label>
+                                        <input type="date" class="form-control" id="issueDate" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">تاريخ الدخول (ميلادي)<br><small>Admission Date (Gregorian)</small></label>
+                                        <input type="date" class="form-control" id="admissionDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">تاريخ الدخول (هجري)<br><small>Admission Date (Hijri)</small></label>
+                                        <input type="text" class="form-control" id="admissionDateHijri" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">تاريخ الخروج (ميلادي)<br><small>Discharge Date (Gregorian)</small></label>
+                                        <input type="date" class="form-control" id="dischargeDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">تاريخ الخروج (هجري)<br><small>Discharge Date (Hijri)</small></label>
+                                        <input type="text" class="form-control" id="dischargeDateHijri" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">مدة الإجازة (عربي)<br><small>Leave Duration (Arabic)</small></label>
+                                        <input type="text" class="form-control" id="leaveDurationArabic" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">مدة الإجازة (إنجليزي)<br><small>Leave Duration (English)</small></label>
+                                        <input type="text" class="form-control" id="leaveDurationEnglish" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-user me-2"></i>
+                            EMPLOYEE INFORMATION - معلومات الموظف
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">الاسم (عربي)<br><small>Name (Arabic)</small></label>
+                                        <input type="text" class="form-control" id="nameArabic" placeholder="أدخل الاسم بالعربية" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">الاسم (إنجليزي)<br><small>Name (English)</small></label>
+                                        <input type="text" class="form-control" id="nameEnglish" placeholder="Enter name in English" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">رقم الهوية / الإقامة<br><small>National ID / Iqama</small></label>
+                                        <input type="text" class="form-control" id="nationalId" placeholder="أدخل رقم الهوية" pattern="[0-9]{10,12}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">الجنسية (عربي)<br><small>Nationality (Arabic)</small></label>
+                                        <select class="form-control" id="nationalityArabic" required>
+                                            <option value="">اختر الجنسية</option>
+                                            <option value="سعودي">سعودي</option>
+                                            <option value="مصري">مصري</option>
+                                            <option value="أردني">أردني</option>
+                                            <option value="سوري">سوري</option>
+                                            <option value="لبناني">لبناني</option>
+                                            <option value="فلسطيني">فلسطيني</option>
+                                            <option value="عراقي">عراقي</option>
+                                            <option value="يمني">يمني</option>
+                                            <option value="كويتي">كويتي</option>
+                                            <option value="إماراتي">إماراتي</option>
+                                            <option value="قطري">قطري</option>
+                                            <option value="بحريني">بحريني</option>
+                                            <option value="عماني">عماني</option>
+                                            <option value="مغربي">مغربي</option>
+                                            <option value="جزائري">جزائري</option>
+                                            <option value="تونسي">تونسي</option>
+                                            <option value="ليبي">ليبي</option>
+                                            <option value="سوداني">سوداني</option>
+                                            <option value="باكستاني">باكستاني</option>
+                                            <option value="هندي">هندي</option>
+                                            <option value="بنغلاديشي">بنغلاديشي</option>
+                                            <option value="فلبيني">فلبيني</option>
+                                            <option value="إندونيسي">إندونيسي</option>
+                                            <option value="أثيوبي">أثيوبي</option>
+                                            <option value="أخرى">أخرى</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">الجنسية (إنجليزي)<br><small>Nationality (English)</small></label>
+                                        <input type="text" class="form-control" id="nationalityEnglish" placeholder="Enter nationality in English" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">جهة العمل (عربي)<br><small>Employer (Arabic)</small></label>
+                                        <input type="text" class="form-control" id="employerArabic" placeholder="أدخل جهة العمل بالعربية" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">جهة العمل (إنجليزي)<br><small>Employer (English)</small></label>
+                                        <input type="text" class="form-control" id="employerEnglish" placeholder="Enter employer in English" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            MEDICAL INFORMATION - معلومات طبية
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">اسم الطبيب المعالج (عربي)<br><small>Physician Name (Arabic)</small></label>
+                                        <input type="text" class="form-control" id="physicianArabic" placeholder="أدخل اسم الطبيب بالعربية" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">اسم الطبيب المعالج (إنجليزي)<br><small>Physician Name (English)</small></label>
+                                        <input type="text" class="form-control" id="physicianEnglish" placeholder="Enter physician name in English" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">المسمى الوظيفي (عربي)<br><small>Position (Arabic)</small></label>
+                                        <input type="text" class="form-control" id="positionArabic" placeholder="أدخل المسمى الوظيفي بالعربية" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">المسمى الوظيفي (إنجليزي)<br><small>Position (English)</small></label>
+                                        <input type="text" class="form-control" id="positionEnglish" placeholder="Enter position in English" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-success" onclick="newForm()">
+                            <i class="fas fa-plus me-2"></i>
+                            جديد
+                        </button>
+                        <button type="submit" class="btn btn-primary" onclick="saveLeave()">
+                            <i class="fas fa-save me-2"></i>
+                            حفظ
+                        </button>
+                        <a href="/dashboardUser" class="btn btn-secondary">
+                            <i class="fas fa-home me-2"></i>
+                            الصفحة الرئيسية
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="custom-modal" id="customModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h4 id="modalTitle">تأكيد العملية</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon" id="modalIcon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="modal-message" id="modalMessage">
+                    هل أنت متأكد من هذه العملية؟
+                </div>
+                <div class="modal-buttons" id="modalButtons">
+                    <!-- Buttons will be added dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Nationality mapping from Arabic to English
+        const nationalityMapping = {
+            'سعودي': 'Saudi',
+            'مصري': 'Egyptian',
+            'أردني': 'Jordanian',
+            'سوري': 'Syrian',
+            'لبناني': 'Lebanese',
+            'فلسطيني': 'Palestinian',
+            'عراقي': 'Iraqi',
+            'يمني': 'Yemeni',
+            'كويتي': 'Kuwaiti',
+            'إماراتي': 'Emirati',
+            'قطري': 'Qatari',
+            'بحريني': 'Bahraini',
+            'عماني': 'Omani',
+            'مغربي': 'Moroccan',
+            'جزائري': 'Algerian',
+            'تونسي': 'Tunisian',
+            'ليبي': 'Libyan',
+            'سوداني': 'Sudanese',
+            'باكستاني': 'Pakistani',
+            'هندي': 'Indian',
+            'بنغلاديشي': 'Bangladeshi',
+            'فلبيني': 'Filipino',
+            'إندونيسي': 'Indonesian',
+            'أثيوبي': 'Ethiopian',
+            'أخرى': 'Other'
+        };
+
+        // Simple Hijri date conversion (approximation)
+        function gregorianToHijri(gregorianDate) {
+            if (!gregorianDate) return '';
+            
+            const gDate = new Date(gregorianDate);
+            const gYear = gDate.getFullYear();
+            const gMonth = gDate.getMonth() + 1;
+            const gDay = gDate.getDate();
+            
+            // Simple approximation formula (not 100% accurate but close)
+            const hYear = Math.floor((gYear - 622) * 1.030684);
+            const hMonth = Math.floor((gMonth + (gDay / 30)) * 1.030684) % 12 + 1;
+            const hDay = Math.floor(gDay * 1.030684) % 30 + 1;
+            
+            return `${hDay.toString().padStart(2, '0')}-${hMonth.toString().padStart(2, '0')}-${hYear}`;
+        }
+
+        // Calculate duration between two dates
+        function calculateDuration(startDate, endDate) {
+            if (!startDate || !endDate) return { arabic: '', english: '' };
+            
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end dates
+            
+            const startHijri = gregorianToHijri(startDate);
+            const endHijri = gregorianToHijri(endDate);
+            
+            const startFormatted = start.toLocaleDateString('en-GB');
+            const endFormatted = end.toLocaleDateString('en-GB');
+            
+            return {
+                arabic: `${diffDays} يوم (${startHijri} إلى ${endHijri})`,
+                english: `${diffDays} day${diffDays > 1 ? 's' : ''} (${startFormatted} to ${endFormatted})`
+            };
+        }
+
+        // Validate National ID format
+        function validateNationalId(id) {
+            return /^[0-9]{10,12}$/.test(id);
+        }
+
+        // Generate new Leave ID
+        function generateLeaveId() {
+            const timestamp = Date.now().toString().slice(-8);
+            return `GSL${timestamp}`;
+        }
+
+        // Show validation message
+        function showValidationMessage(fieldId, message, isError = true) {
+            const field = document.getElementById(fieldId);
+            const existingMessage = field.parentNode.querySelector('.error-message, .success-message');
+            
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isError ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            
+            field.parentNode.appendChild(messageDiv);
+            
+            if (isError) {
+                field.classList.add('is-invalid');
+                field.classList.remove('is-valid');
+            } else {
+                field.classList.add('is-valid');
+                field.classList.remove('is-invalid');
+            }
+        }
+
+        // Clear validation message
+        function clearValidationMessage(fieldId) {
+            const field = document.getElementById(fieldId);
+            const existingMessage = field.parentNode.querySelector('.error-message, .success-message');
+            
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            field.classList.remove('is-invalid', 'is-valid');
+        }
+
+        // Custom Modal Functions
+        function showModal(title, message, iconClass, iconType, buttons) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            
+            const modalIcon = document.getElementById('modalIcon');
+            modalIcon.className = `modal-icon ${iconType}`;
+            modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            
+            const modalButtons = document.getElementById('modalButtons');
+            modalButtons.innerHTML = '';
+            
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = `modal-btn ${button.class}`;
+                btn.innerHTML = button.icon ? `<i class="${button.icon}"></i> ${button.text}` : button.text;
+                btn.onclick = button.action;
+                modalButtons.appendChild(btn);
+            });
+            
+            document.getElementById('customModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('show');
+        }
+
+        function showSuccessModal(message, callback) {
+            showModal(
+                'تم بنجاح',
+                message,
+                'fas fa-check-circle',
+                'success',
+                [
+                    {
+                        text: 'موافق',
+                        class: 'modal-btn-success',
+                        icon: 'fas fa-check',
+                        action: () => {
+                            closeModal();
+                            if (callback) callback();
+                        }
+                    }
+                ]
+            );
+        }
+
+        function showErrorModal(message) {
+            showModal(
+                'خطأ',
+                message,
+                'fas fa-exclamation-triangle',
+                'error',
+                [
+                    {
+                        text: 'موافق',
+                        class: 'modal-btn-danger',
+                        icon: 'fas fa-times',
+                        action: closeModal
+                    }
+                ]
+            );
+        }
+
+        function showConfirmModal(message, onConfirm, onCancel) {
+            showModal(
+                'تأكيد العملية',
+                message,
+                'fas fa-question-circle',
+                'warning',
+                [
+                    {
+                        text: 'نعم',
+                        class: 'modal-btn-success',
+                        icon: 'fas fa-check',
+                        action: () => {
+                            closeModal();
+                            if (onConfirm) onConfirm();
+                        }
+                    },
+                    {
+                        text: 'إلغاء',
+                        class: 'modal-btn-secondary',
+                        icon: 'fas fa-times',
+                        action: () => {
+                            closeModal();
+                            if (onCancel) onCancel();
+                        }
+                    }
+                ]
+            );
+        }
+
+        function showPrintConfirmModal(onPrint, onSave) {
+            showModal(
+                'حفظ البيانات',
+                'تم حفظ البيانات بنجاح. هل تريد طباعة الشهادة؟',
+                'fas fa-print',
+                'success',
+                [
+                    {
+                        text: 'طباعة',
+                        class: 'modal-btn-primary',
+                        icon: 'fas fa-print',
+                        action: () => {
+                            closeModal();
+                            if (onPrint) onPrint();
+                        }
+                    },
+                    {
+                        text: 'حفظ فقط',
+                        class: 'modal-btn-success',
+                        icon: 'fas fa-save',
+                        action: () => {
+                            closeModal();
+                            if (onSave) onSave();
+                        }
+                    }
+                ]
+            );
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('customModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const floatingNav = document.getElementById('floatingNav');
+            
+            navToggle.addEventListener('click', function() {
+                floatingNav.classList.toggle('show');
+                
+                // Change icon with smooth transition
+                const icon = navToggle.querySelector('i');
+                if (floatingNav.classList.contains('show')) {
+                    icon.style.transform = 'rotate(90deg)';
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Close floating nav when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navToggle.contains(event.target) && !floatingNav.contains(event.target)) {
+                    floatingNav.classList.remove('show');
+                    const icon = navToggle.querySelector('i');
+                    icon.style.transform = 'rotate(0deg)';
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Add smooth transitions to icon
+            const icon = navToggle.querySelector('i');
+            icon.style.transition = 'transform 0.3s ease';
+
+            // Header scroll behavior
+            let lastScrollTop = 0;
+            const header = document.querySelector(".header");
+
+            window.addEventListener("scroll", function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down
+                    header.style.transform = "translateY(-100%)";
+                    header.style.opacity = "0";
+                } else {
+                    // Scrolling up
+                    header.style.transform = "translateY(0)";
+                    header.style.opacity = "1";
+                }
+                lastScrollTop = scrollTop;
+            });
+
+            // Initialize form
+            initializeForm();
+
+            // Event listeners for date changes
+            document.getElementById('admissionDate').addEventListener('change', function() {
+                const hijriDate = gregorianToHijri(this.value);
+                document.getElementById('admissionDateHijri').value = hijriDate;
+                updateDuration();
+            });
+
+            document.getElementById('dischargeDate').addEventListener('change', function() {
+                const hijriDate = gregorianToHijri(this.value);
+                document.getElementById('dischargeDateHijri').value = hijriDate;
+                updateDuration();
+            });
+
+            // Event listener for nationality change
+            document.getElementById('nationalityArabic').addEventListener('change', function() {
+                const englishNationality = nationalityMapping[this.value] || '';
+                document.getElementById('nationalityEnglish').value = englishNationality;
+            });
+
+            // Event listener for National ID validation
+            document.getElementById('nationalId').addEventListener('blur', function() {
+                if (this.value && !validateNationalId(this.value)) {
+                    showValidationMessage('nationalId', 'رقم الهوية يجب أن يكون من 10 إلى 12 رقم', true);
+                } else if (this.value) {
+                    clearValidationMessage('nationalId');
+                }
+            });
+
+            // Real-time validation for required fields
+            const requiredFields = ['nameArabic', 'nameEnglish', 'nationalId', 'admissionDate', 'dischargeDate', 'employerArabic', 'employerEnglish', 'physicianArabic', 'physicianEnglish', 'positionArabic', 'positionEnglish'];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                field.addEventListener('blur', function() {
+                    if (!this.value.trim()) {
+                        showValidationMessage(fieldId, 'هذا الحقل مطلوب', true);
+                    } else {
+                        clearValidationMessage(fieldId);
+                    }
+                });
+            });
+        });
+
+        function initializeForm() {
+            // Set today's date as default for issue date
+            document.getElementById("issueDate").value = new Date().toISOString().split("T")[0];
+            
+            // Generate new leave ID
+            document.getElementById("leaveId").value = generateLeaveId();
+        }
+
+        function updateDuration() {
+            const admissionDate = document.getElementById('admissionDate').value;
+            const dischargeDate = document.getElementById('dischargeDate').value;
+            
+            const duration = calculateDuration(admissionDate, dischargeDate);
+            
+            document.getElementById('leaveDurationArabic').value = duration.arabic;
+            document.getElementById('leaveDurationEnglish').value = duration.english;
+        }
+
+        function newForm() {
+            showConfirmModal(
+                'هل أنت متأكد من إنشاء نموذج جديد؟ سيتم مسح جميع البيانات الحالية.',
+                function() {
+                    document.getElementById('leaveForm').reset();
+                    
+                    // Clear all validation messages
+                    document.querySelectorAll('.error-message, .success-message').forEach(msg => msg.remove());
+                    document.querySelectorAll('.is-invalid, .is-valid').forEach(field => {
+                        field.classList.remove('is-invalid', 'is-valid');
+                    });
+                    
+                    initializeForm();
+                    showSuccessModal('تم إنشاء نموذج جديد بنجاح');
+                }
+            );
+        }
+
+        function saveLeave() {
+            
+            // Validate all required fields
+            const requiredFields = [
+                { id: 'leaveId', name: 'رمز الإجازة' },
+                { id: 'nameArabic', name: 'الاسم (عربي)' },
+                { id: 'nameEnglish', name: 'الاسم (إنجليزي)' },
+                { id: 'nationalId', name: 'رقم الهوية' },
+                { id: 'admissionDate', name: 'تاريخ الدخول' },
+                { id: 'dischargeDate', name: 'تاريخ الخروج' },
+                { id: 'employerArabic', name: 'جهة العمل (عربي)' },
+                { id: 'employerEnglish', name: 'جهة العمل (إنجليزي)' },
+                { id: 'physicianArabic', name: 'اسم الطبيب (عربي)' },
+                { id: 'physicianEnglish', name: 'اسم الطبيب (إنجليزي)' },
+                { id: 'positionArabic', name: 'المسمى الوظيفي (عربي)' },
+                { id: 'positionEnglish', name: 'المسمى الوظيفي (إنجليزي)' }
+            ];
+
+            let isValid = true;
+            let firstErrorField = null;
+            let errorMessages = [];
+
+            // Clear previous validation messages
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => msg.remove());
+            document.querySelectorAll('.is-invalid, .is-valid').forEach(field => {
+                field.classList.remove('is-invalid', 'is-valid');
+            });
+
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element.value.trim()) {
+                    showValidationMessage(field.id, `${field.name} مطلوب`, true);
+                    errorMessages.push(field.name);
+                    isValid = false;
+                    if (!firstErrorField) firstErrorField = element;
+                }
+            });
+
+            // Validate National ID format
+            const nationalId = document.getElementById('nationalId').value;
+            if (nationalId && !validateNationalId(nationalId)) {
+                showValidationMessage('nationalId', 'رقم الهوية يجب أن يكون من 10 إلى 12 رقم', true);
+                errorMessages.push('تنسيق رقم الهوية');
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById('nationalId');
+            }
+
+            // Validate nationality selection
+            const nationality = document.getElementById('nationalityArabic').value;
+            if (!nationality) {
+                showValidationMessage('nationalityArabic', 'يرجى اختيار الجنسية', true);
+                errorMessages.push('الجنسية');
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById('nationalityArabic');
+            }
+
+            // Validate date logic
+            const admissionDate = new Date(document.getElementById('admissionDate').value);
+            const dischargeDate = new Date(document.getElementById('dischargeDate').value);
+            
+            if (admissionDate && dischargeDate && dischargeDate < admissionDate) {
+                showValidationMessage('dischargeDate', 'تاريخ الخروج يجب أن يكون بعد تاريخ الدخول', true);
+                errorMessages.push('تواريخ الدخول والخروج');
+                isValid = false;
+                if (!firstErrorField) firstErrorField = document.getElementById('dischargeDate');
+            }
+
+            if (!isValid) {
+                const errorMessage = `يرجى تصحيح الأخطاء التالية:\n• ${errorMessages.join('\n• ')}`;
+                showErrorModal(errorMessage);
+                
+                if (firstErrorField) {
+                    firstErrorField.focus();
+                    firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            const leaveId = document.getElementById('leaveId').value.trim();
+
+showPrintConfirmModal(
+  function() {
+    // On print - redirect to print preview with actual leaveId
+    window.location.href = `/download-leave/${leaveId}`;
+  },
+  function() {
+    // On save only - show success message
+    showSuccessModal('تم حفظ البيانات بنجاح');
+    
+    // Mark all fields as valid
+    document.querySelectorAll('.form-control').forEach(field => {
+      if (field.value.trim()) {
+        field.classList.add('is-valid');
+      }
+    });
+  }
+);
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('leaveForm');
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault(); // ⛔ Prevent page reload
+
+    // Call your function to POST the data
+    saveFormData();
+  });
+});
+            function saveFormData() {
+              
+                // Collect all form data
+                const formData = {
+                    leaveId: document.getElementById('leaveId').value,
+                issueDate: document.getElementById('issueDate').value,
+                admissionDate: document.getElementById('admissionDate').value,
+                admissionDateHijri: document.getElementById('admissionDateHijri').value,
+                dischargeDate: document.getElementById('dischargeDate').value,
+                dischargeDateHijri: document.getElementById('dischargeDateHijri').value,
+                leaveDurationArabic: document.getElementById('leaveDurationArabic').value,
+                leaveDurationEnglish: document.getElementById('leaveDurationEnglish').value,
+                nameArabic: document.getElementById('nameArabic').value,
+                nameEnglish: document.getElementById('nameEnglish').value,
+                nationalId: document.getElementById('nationalId').value,
+                nationalityArabic: document.getElementById('nationalityArabic').value,
+                nationalityEnglish: document.getElementById('nationalityEnglish').value,
+                employerArabic: document.getElementById('employerArabic').value,
+                employerEnglish: document.getElementById('employerEnglish').value,
+                physicianArabic: document.getElementById('physicianArabic').value,
+                physicianEnglish: document.getElementById('physicianEnglish').value,
+                positionArabic: document.getElementById('positionArabic').value,
+                positionEnglish: document.getElementById('positionEnglish').value
+            };
+            
+            // Save to localStorage for print preview
+            
+            return fetch('http://localhost:4000/api/save-leave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            }).then(response => {
+                console.log(response);
+                if (!response.ok) {
+                    throw new Error('Failed to save to server');
+                }
+                return response.json();
+            });
+        }
+        
+      
+        </script>
+</body>
+</html>
+

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الإجازات المرضية - لوحة التحكم بالإجازات</title>
+    
+    <!-- Bootstrap 5.3 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/main/modern-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <%- include ('./nav/navUser') %>
+
+          <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Page Header -->
+            <div class="welcome-section fade-in mb-4">
+                <div class="welcome-header">
+                    <h2>
+                        <i class="fas fa-check-circle me-2"></i>
+                        إدارة الإجازات المرضية
+                    </h2>
+                    <p class="mb-0">عرض وإدارة جميع الإجازات المرضية في النظام</p>
+                </div>
+            </div>
+          
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid slide-up mb-4">
+                <div class="stat-card">
+                    <div class="number" id="totalLeaves"></div>
+                    <div class="title">إجمالي الإجازات</div>
+                    <div class="change positive">
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="activeLeaves"></div>
+                    <div class="title">إجازات نشطة</div>
+                    <div class="change positive">
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="expiredLeaves"></div>
+                    <div class="title">إجازات منتهية</div>
+                    <div class="change negative">
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="weeklyLeaves"></div>
+                    <div class="title">اجمالي الاجازات الاسبوعية</div>
+                    <div class="change positive">
+                    </div>
+                </div>
+            </div>
+  <!-- Search and Filter Section -->
+  <div class="card fade-in mb-4">
+    <div class="card-header">
+        <h4 class="mb-0">
+            <i class="fas fa-search me-2"></i>
+            البحث والتصفية
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    <label class="form-label">البحث بالاسم أو رقم الإجازة</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="أدخل الاسم أو رقم الإجازة">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group mb-3">
+                    <label class="form-label">من تاريخ</label>
+                    <input type="date" class="form-control" id="dateFrom">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group mb-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-primary w-100" onclick="searchLeaves()">
+                        <i class="fas fa-search me-2"></i>
+                        بحث
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- Leaves Table -->
+            <div class="card scale-in">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        قائمة الإجازات المرضية
+                    </h4>
+                    <div>
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="leavesTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الإجازة</th>
+                                    <th>اسم الموظف</th>
+                                    <th>رقم الهوية</th>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>المدة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leavesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="صفحات النتائج" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">السابق</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">التالي</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Leave Modal -->
+    <div class="modal fade" id="viewLeaveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تفاصيل الإجازة المرضية</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>معلومات الإجازة</h6>
+                            <p><strong>رقم الإجازة:</strong> <span id="modalLeaveId">-</span></p>
+                            <p><strong>تاريخ الإصدار:</strong> <span id="modalIssueDate">-</span></p>
+                            <p><strong>تاريخ البداية:</strong> <span id="modalStartDate">-</span></p>
+                            <p><strong>تاريخ النهاية:</strong> <span id="modalEndDate">-</span></p>
+                            <p><strong>المدة:</strong> <span id="modalDuration">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>معلومات الموظف</h6>
+                            <p><strong>الاسم:</strong> <span id="modalEmployeeName">-</span></p>
+                            <p><strong>رقم الهوية:</strong> <span id="modalNationalId">-</span></p>
+                            <p><strong>الجنسية:</strong> <span id="modalNationality">-</span></p>
+                            <p><strong>جهة العمل:</strong> <span id="modalEmployer">-</span></p>
+                            <p><strong>الطبيب المعالج:</strong> <span id="modalPhysician">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="printLeave()">
+                        <i class="fas fa-print me-2"></i>
+                        طباعة
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  <!-- Edit Leave Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="fas fa-edit me-2"></i>
+                    تعديل بيانات الإجازة المرضية
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <form class="edit-form" id="editForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">رمز الإجازة</label>
+                            <input type="text" class="form-control" id="editLeaveCode" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">مدة الإجازة</label>
+                            <input type="text" class="form-control" id="editLeaveDuration">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ الدخول (ميلادي)</label>
+                            <input type="date" class="form-control" id="editEntryDateGregorian">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ الدخول (هجري)</label>
+                            <input type="text" class="form-control" id="editEntryDateHijri">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ الخروج (ميلادي)</label>
+                            <input type="date" class="form-control" id="editExitDateGregorian">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ الخروج (هجري)</label>
+                            <input type="text" class="form-control" id="editExitDateHijri">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ إصدار التقرير</label>
+                            <input type="date" class="form-control" id="editReportDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">الاسم</label>
+                            <input type="text" class="form-control" id="editNameArabic">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editNameEnglish">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">رقم الهوية/الإقامة</label>
+                            <input type="text" class="form-control" id="editIdNumber">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">الجنسية</label>
+                            <input type="text" class="form-control" id="editNationalityArabic">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nationality</label>
+                            <input type="text" class="form-control" id="editNationalityEnglish">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">جهة العمل</label>
+                            <input type="text" class="form-control" id="editEmployerArabic">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Employer</label>
+                            <input type="text" class="form-control" id="editEmployerEnglish">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">اسم الطبيب المعالج</label>
+                            <input type="text" class="form-control" id="editPhysicianArabic">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Physician Name</label>
+                            <input type="text" class="form-control" id="editPhysicianEnglish">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">المسمى الوظيفي</label>
+                            <input type="text" class="form-control" id="editPositionArabic">veChanges
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Position</label>
+                            <input type="text" class="form-control" id="editPositionEnglish">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    إلغاء
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveLeaveChanges()">
+                    <i class="fas fa-save me-2"></i>
+                    حفظ التغييرات
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">تأكيد العملية</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="modal-icon mb-3" id="confirmModalIcon">
+                            <i class="fas fa-question-circle" style="font-size: 3rem; color: var(--warning-color);"></i>
+                        </div>
+                        <div id="confirmModalMessage">هل أنت متأكد من هذه العملية؟</div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmButton">نعم، متأكد</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+          const tableBody = document.getElementById('leavesTableBody');
+          const monthlyLeaves = document.querySelector('#totalLeaves')
+    const activeUsers = document.querySelector('#activeUsers')
+    const todayLeaves = document.querySelector('#todayLeaves')
+    const activeLeaves = document.querySelector('#activeLeaves')
+    const expiredLeaves = document.querySelector('#expiredLeaves')
+    const weeklyLeaves = document.querySelector('#weeklyLeaves')
+    fetch('/api/leave-count/current-month')
+  .then(response => response.json())
+  .then(data => {
+    monthlyLeaves.textContent = data.total;
+  })
+  .catch(error => console.error('خطأ في جلب عدد الإجازات:', error));
+
+    fetch('/api/active')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not OK');
+      }
+      return response.json();
+    })
+    .then(data => {
+        data.map(activeLeave => {
+            
+            activeLeaves.textContent = activeLeave.total;
+        })
+    }
+    )
+    fetch('/api/deactive')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not OK');
+      }
+      return response.json();
+    })
+    .then(data => {
+        data.map(expiredLeave => {
+            
+            expiredLeaves.textContent = expiredLeave.total;
+        })
+    }
+    )
+    fetch('/api/weekly')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not OK');
+      }
+      return response.json();
+    })
+    .then(data => {
+        console.log(data);
+            weeklyLeaves.textContent = data.count;
+        
+    }
+    )
+
+window.addEventListener('load', () => {
+  fetch('/api/add_leaveALL')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not OK');
+      }
+      return response.json();
+    })
+    .then(data => {
+      data.forEach(row => {
+const isoDate = row.admission_date;
+const isoDate2 = row.discharge_date;
+
+const date = new Date(isoDate);
+const date2 = new Date(isoDate2);
+
+// الحصول على التاريخ المحلي (حسب توقيت جهاز المستخدم)
+const year = date.getFullYear();
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const day = String(date.getDate()).padStart(2, '0');
+
+const year1 = date2.getFullYear();
+const month1 = String(date2.getMonth() + 1).padStart(2, '0');
+const day1 = String(date2.getDate()).padStart(2, '0');
+
+const formattedDate = `${day}-${month}-${year}`;
+const formattedDate1 = `${day1}-${month1}-${year1}`;
+        const html = `
+        <tr>
+    <td><span class="badge bg-primary">${row.leave_id}</span></td>
+    <td>${row.name_arabic}</td>
+    <td>${row.national_id}</td>
+    <td>${formattedDate}</td>
+    <td>${formattedDate1}</td>
+    <td>${row.leave_duration_arabic}</td>
+    <td>
+      <button class="btn btn-sm btn-primary me-1" onclick="viewLeave('${row.leave_id}')" title="عرض">
+        <i class="fas fa-eye"></i>
+      </button>
+      <button class="btn btn-sm btn-warning me-1" onclick="editLeave('${row.leave_id}')" title="تعديل">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button class="btn btn-sm btn-info me-1" onclick="printLeave('${row.leave_id}')" title="طباعة">
+        <i class="fas fa-print"></i>
+      </button>
+      <button class="btn btn-sm btn-danger" onclick="deleteLeave('${row.leave_id}')" title="حذف">
+        <i class="fas fa-trash"></i>
+      </button>
+    </td>
+  </tr>
+`;
+        tableBody.insertAdjacentHTML('beforeend', html);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching leave data:', error);
+    });
+});
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const floatingNav = document.getElementById('floatingNav');
+            
+            // Navigation toggle functionality
+            navToggle.addEventListener('click', function() {
+                floatingNav.classList.toggle('show');
+                
+                const icon = navToggle.querySelector('i');
+                if (floatingNav.classList.contains('show')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Close floating nav when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navToggle.contains(event.target) && !floatingNav.contains(event.target)) {
+                    floatingNav.classList.remove('show');
+                    const icon = navToggle.querySelector('i');
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Initialize search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                searchLeaves();
+            });
+
+        });
+
+        function searchLeaves() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            
+          
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const leaveId = row.cells[0].textContent.toLowerCase();
+                const employeeName = row.cells[1].textContent.toLowerCase();
+                const nationalId = row.cells[2].textContent.toLowerCase();
+                const status = row.cells[6].textContent.toLowerCase();
+                const startDate = row.cells[3].textContent;
+                
+                let showRow = true;
+                
+                // Search filter
+                if (searchTerm && !leaveId.includes(searchTerm) && 
+                    !employeeName.includes(searchTerm) && 
+                    !nationalId.includes(searchTerm)) {
+                    showRow = false;
+                }
+                
+                // Status filter
+                if (statusFilter && !status.includes(statusFilter)) {
+                    showRow = false;
+                }
+                
+                // Date filter
+                if (dateFrom && startDate < dateFrom) {
+                    showRow = false;
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+            }
+        }
+        function viewLeave(leaveId) {
+  fetch(`/api/leave/${leaveId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch leave data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // تعبئة الحقول من البيانات القادمة من الخادم
+      document.getElementById('modalLeaveId').textContent = data.leave_id;
+      document.getElementById('modalIssueDate').textContent = formatDate(data.issue_date);
+      document.getElementById('modalStartDate').textContent = formatDate(data.admission_date);
+      document.getElementById('modalEndDate').textContent = formatDate(data.discharge_date);
+      document.getElementById('modalDuration').textContent = data.leave_duration_arabic;
+      document.getElementById('modalEmployeeName').textContent = data.name_arabic;
+      document.getElementById('modalNationalId').textContent = data.national_id;
+      document.getElementById('modalNationality').textContent = data.nationality_arabic;
+      document.getElementById('modalEmployer').textContent = data.employer_arabic;
+      document.getElementById('modalPhysician').textContent = data.physician_arabic;
+
+      // عرض المودال
+      const modal = new bootstrap.Modal(document.getElementById('viewLeaveModal'));
+      modal.show();
+    })
+    .catch(error => {
+      console.error('Error fetching leave data:', error);
+    });
+}
+
+// وظيفة مساعدة لتحويل التاريخ إلى DD-MM-YYYY
+function formatDate(isoDate) {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+function editLeave(leaveId) {
+  fetch(`/api/leave/${leaveId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch leave data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById('editLeaveCode').value = data.leave_id;
+      document.getElementById('editLeaveDuration').value = data.leave_duration_english;
+      document.getElementById('editEntryDateGregorian').value = formatDate(data.admission_date);
+      document.getElementById('editExitDateGregorian').value = formatDate(data.discharge_date);
+      document.getElementById('editReportDate').value = formatDate(data.issue_date);
+      document.getElementById('editEntryDateHijri').value = data.admission_date_hijri || '';
+      document.getElementById('editExitDateHijri').value = data.discharge_date_hijri || '';
+      document.getElementById('editNameArabic').value = data.name_arabic;
+      document.getElementById('editNameEnglish').value = data.name_english;
+      document.getElementById('editIdNumber').value = data.national_id;
+      document.getElementById('editNationalityArabic').value = data.nationality_arabic;
+      document.getElementById('editNationalityEnglish').value = data.nationality_english;
+      document.getElementById('editEmployerArabic').value = data.employer_arabic;
+      document.getElementById('editEmployerEnglish').value = data.employer_english;
+      document.getElementById('editPhysicianArabic').value = data.physician_arabic;
+      document.getElementById('editPhysicianEnglish').value = data.physician_english;
+      document.getElementById('editPositionArabic').value = data.position_arabic;
+      document.getElementById('editPositionEnglish').value = data.position_english;
+
+      // عرض المودال
+      const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+      editModal.show();
+    })
+    .catch(error => {
+      console.error('Error fetching leave data:', error);
+    });
+}
+
+// ✅ هذه الدالة يجب أن تكون خارج editLeave()
+function saveLeaveChanges() {
+  const leaveId = document.getElementById('editLeaveCode').value;
+
+  const updatedLeave = {
+    leave_duration_english: document.getElementById('editLeaveDuration').value,
+    admission_date: document.getElementById('editEntryDateGregorian').value,
+    admission_date_hijri: document.getElementById('editEntryDateHijri').value,
+    discharge_date: document.getElementById('editExitDateGregorian').value,
+    discharge_date_hijri: document.getElementById('editExitDateHijri').value,
+    issue_date: document.getElementById('editReportDate').value,
+    name_arabic: document.getElementById('editNameArabic').value,
+    name_english: document.getElementById('editNameEnglish').value,
+    national_id: document.getElementById('editIdNumber').value,
+    nationality_arabic: document.getElementById('editNationalityArabic').value,
+    nationality_english: document.getElementById('editNationalityEnglish').value,
+    employer_arabic: document.getElementById('editEmployerArabic').value,
+    employer_english: document.getElementById('editEmployerEnglish').value,
+    physician_arabic: document.getElementById('editPhysicianArabic').value,
+    physician_english: document.getElementById('editPhysicianEnglish').value,
+    position_arabic: document.getElementById('editPositionArabic').value,
+    position_english: document.getElementById('editPositionEnglish').value
+  };
+
+  fetch(`/api/leave/${leaveId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedLeave)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('فشل التحديث');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert('✅ تم حفظ التعديلات بنجاح');
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+      modal.hide();
+      location.reload();
+    })
+    .catch(error => {
+      console.error(error);
+      alert('❌ حدث خطأ أثناء حفظ التعديلات');
+    });
+}
+// تنسيق التاريخ (yyyy-mm-dd)
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const year = date.getFullYear();
+  const month = (`0${date.getMonth() + 1}`).slice(-2);
+  const day = (`0${date.getDate()}`).slice(-2);
+  return `${year}-${month}-${day}`;
+}
+
+        function printLeave(leaveId) {
+  if (!leaveId) {
+    // جلب الرقم من span في المودال
+    leaveId = document.getElementById('modalLeaveId').textContent.trim();
+  }
+  if (!leaveId) {
+    alert('رقم الإجازة غير موجود للطباعة!');
+    return;
+  }
+  window.location.href = `/download-leave/${leaveId}`;
+}
+function deleteLeave(leaveId) {
+  showConfirmModal(
+    'حذف الإجازة',
+    `هل أنت متأكد من حذف الإجازة رقم ${leaveId}؟ لا يمكن التراجع عن هذه العملية.`,
+    'fas fa-trash',
+    'danger',
+    function () {
+      // إجراء الحذف من قاعدة البيانات عبر الطلب إلى الخادم
+      fetch(`/api/leave/${leaveId}`, {
+        method: 'DELETE'
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('فشل في حذف الإجازة');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // حذف الصف من الجدول
+          const cells = document.querySelectorAll('td');
+let row = null;
+
+cells.forEach(cell => {
+  if (cell.textContent.trim() === leaveId) {
+    row = cell.closest('tr');
+  }
+});
+
+if (row) {
+  row.remove();
+}
+        
+
+          showSuccessAlert('✅ تم حذف الإجازة بنجاح');
+          updateStatistics(); // تحديث الإحصائيات إذا لزم الأمر
+        })
+        .catch(error => {
+          console.error(error);
+          showErrorAlert('❌ حدث خطأ أثناء محاولة الحذف');
+        });
+    }
+  );
+}
+
+        function exportToExcel() {
+            // Simulate Excel export
+            showSuccessAlert('تم تصدير البيانات إلى Excel بنجاح');
+        }
+
+        function printReport() {
+            // Open print dialog
+            window.print();
+        }
+
+        function showConfirmModal(title, message, iconClass, iconType, onConfirm) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalMessage').textContent = message;
+            
+            const iconElement = document.getElementById('confirmModalIcon');
+            iconElement.innerHTML = `<i class="${iconClass}" style="font-size: 3rem; color: var(--${iconType}-color);"></i>`;
+            
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.onclick = function() {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+
+        function showSuccessAlert(message) {
+            // Create a temporary alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 3000);
+        }
+
+        // Add smooth animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards for animation
+        document.querySelectorAll('.stat-card, .card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
+

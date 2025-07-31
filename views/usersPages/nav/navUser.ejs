@@ -1,0 +1,92 @@
+<header class="header bg-light border-bottom">
+    <div class="container-fluid">
+      <!-- Top Row -->
+      <div class="row align-items-center py-3">
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-start mb-2 mb-md-0">
+          <i class="fas fa-hospital-alt me-2" style="font-size: 2rem;"></i>
+          <div class="text-center text-md-start">
+            <h5 class="mb-0">نظام إدارة الإجازات المرضية</h5>
+            <small>Sick Leave Management System</small>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end align-items-center gap-2">
+          <span class="user-name">أحمد المدير</span>
+          <i class="fas fa-user-circle"></i>
+          <i class="fas fa-bell"></i>
+        </div>
+      </div>
+  
+      <!-- Navigation Tabs -->
+      <ul class="nav nav-tabs flex-wrap justify-content-center justify-content-md-start">
+        <li class="nav-item">
+          <a class="nav-link active" href="/dashboard">الرئيسية</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/add_leaveUser">إضافة إجازة جديدة</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/manage_leavesUser">إدارة الإجازات المرضية</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+<!-- Floating Navigation Toggle -->
+<button class="nav-toggle" id="navToggle" title="قائمة التنقل">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Floating Navigation Menu -->
+<nav class="floating-nav" id="floatingNav">
+    <div class="floating-nav-header">
+        <h5>القائمة الرئيسية</h5>
+    </div>
+    
+    <ul class="floating-nav-menu">
+        <li class="menu-section">إدارة الإجازات المرضية</li>
+        <a href="/dashboard" class="menu-item">
+            <i class="fas fa-home"></i>
+            الصفحة الرئيسية
+        </a>
+        <a href="/add_leaveUser" class="menu-item active">
+            <i class="fas fa-plus-circle"></i>
+            إضافة إجازة جديدة
+        </a>
+        <a href="/manage_leavesUser" class="menu-item">
+            <i class="fas fa-th-large"></i>
+       اداره الإجازات المرضيه
+        </a>
+        <!-- <a href="#health-certificates" class="menu-item">
+            <i class="fas fa-file-medical"></i>
+            الشهادات الصحية
+        </a>
+        <a href="#operation-cards" class="menu-item">
+            <i class="fas fa-file-alt"></i>
+            بطاقات التشغيل
+        </a>
+         -->
+      
+        <!-- <a href="/backupUser" class="menu-item">
+            <i class="fas fa-cloud-upload-alt"></i>
+            النسخ الاحتياطي
+        </a> -->
+        <a href="/profileUser" class="menu-item">
+            <i class="fas fa-user"></i>
+            الملف الشخصي للمستخدم
+        </a>
+        <!-- <a href="/settingsUser" class="menu-item">
+            <i class="fas fa-cog"></i>
+            إعدادات النظام
+        </a> -->
+        <a href="/" class="menu-item">
+            <i class="fas fa-sign-out-alt"></i>
+            تسجيل خروج
+        </a>
+    </ul>
+</nav>
+
+<script>
+  const user = document.querySelector('.user-name');
+  const username = localStorage.getItem('username');
+  user.textContent = username;
+</script>

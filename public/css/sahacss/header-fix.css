@@ -1,0 +1,24 @@
+/* إضافة خصائص لجعل القائمة العلوية ثابتة عند التمرير */
+header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+    background: #fff !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1) !important;
+}
+
+/* إضافة مساحة في أعلى الصفحة لتعويض القائمة الثابتة */
+body {
+    padding-top: 80px !important;
+}
+
+/* التأكد من أن القائمة تظهر فوق جميع العناصر الأخرى */
+.navbar, .nav, .navigation {
+    position: fixed !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+}
+

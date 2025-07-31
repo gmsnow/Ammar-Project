@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الإجازات المرضية - إدارة المستخدمين</title>
+    
+    <!-- Bootstrap 5.3 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Modern Styles -->
+    <link href="css/sahacss/modern-styles.css" rel="stylesheet">
+    <!-- Responsive Styles -->
+</head>
+<body>
+    <!-- Header -->
+  
+
+   
+    <%- include ('./nav/nav') %>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Page Header -->
+            <div class="welcome-section fade-in mb-4">
+                <div class="welcome-header">
+                    <h2>
+                        <i class="fas fa-users me-2"></i>
+                        إدارة المستخدمين
+                    </h2>
+                    <p class="mb-0">إدارة حسابات المستخدمين وصلاحياتهم في النظام</p>
+                </div>
+            </div>
+            <div class="stats-grid slide-up mb-4">
+                <div class="stat-card">
+                    <div class="number" id="totalUsers"></div>
+                    <div class="title">إجمالي المستخدمين</div>
+
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="activeUsers"></div>
+                    <div class="title">مستخدمين نشطين</div>
+
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="adminUsers"></div>
+                    <div class="title">مديري النظام</div>
+
+                </div>
+            </div>
+            <!-- Add User Section -->
+            <div class="card fade-in mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        إضافة مستخدم جديد
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="addUserForm">
+                      <div class="row">
+                        <div class="col-md-3">
+                          <div class="form-group mb-3">
+                            <label class="form-label">اسم المستخدم</label>
+                            <input type="text" class="form-control" id="username" placeholder="أدخل اسم المستخدم" required>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                              <label class="form-label">رقم الهاتف</label>
+                              <input type="text" class="form-control" id="number" placeholder="أدخل رقم الهاتف" value="+9">
+                            </div>
+                          </div>
+                       
+                        <div class="col-md-3">
+                          <div class="form-group mb-3">
+                            <label class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="email" placeholder="أدخل البريد الإلكتروني" required>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group mb-3">
+                            <label class="form-label">نوع المستخدم</label>
+                            <select class="form-control" id="userRole" required>
+                              <option value="" disabled>اختر نوع المستخدم</option>
+                              <option value="admin">مدير النظام</option>
+                              <option value="admin2">نائب المدير</option>
+                              <option value="employee">موظف</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group mb-3">
+                            <label class="form-label">كلمة المرور</label>
+                            <input type="password" class="form-control" id="password" placeholder="أدخل كلمة المرور" required>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group mb-3">
+                            <label class="form-label">تأكيد كلمة المرور</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="أعد إدخال كلمة المرور" required>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group mb-3">
+                            <label class="form-label">الحالة</label>
+                            <select class="form-control" id="userStatus" required>
+                              <option value="active">نشط</option>
+                              <option value="inactive">غير نشط</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <button type="button" class="btn btn-primary me-2" onclick="addUser()">
+                          <i class="fas fa-plus me-2"></i>
+                          إضافة المستخدم
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                          <i class="fas fa-undo me-2"></i>
+                          إعادة تعيين
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+            <!-- Users Statistics -->
+           
+
+            <!-- Users Table -->
+            <div class="card scale-in">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        قائمة المستخدمين
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Search and Filter -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="searchUsers" placeholder="البحث بالاسم أو البريد الإلكتروني">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-control" id="filterRole">
+                                <option value="">جميع الأنواع</option>
+                                <option value="admin">مدير النظام</option>
+                                <option value="employee">موظف</option>
+                                <option value="admin2">نائب مدير</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-control" id="filterStatus">
+                                <option value="">جميع الحالات</option>
+                                <option value="active">نشط</option>
+                                <option value="inactive">غير نشط</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary w-100" onclick="searchUsers()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>اسم المستخدم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>نوع المستخدم</th>
+                                    <th>الحالة</th>
+                                    <th>تاريخ الإنشاء</th>
+                                    <th>رقم المستخدم</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">تفاصيل المستخدم</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>معلومات أساسية</h6>
+                            <p><strong>اسم المستخدم:</strong> <span id="modalUsername">-</span></p>
+                            <p><strong>البريد الإلكتروني:</strong> <span id="modalEmail">-</span></p>
+                            <p><strong>نوع المستخدم:</strong> <span id="modalRole">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>معلومات النشاط</h6>
+                            <p><strong>الحالة:</strong> <span id="modalStatus">-</span></p>
+                            <p><strong>تاريخ الإنشاء:</strong> <span id="modalCreated">-</span></p>
+                            <p><strong>رقم المستخدم:</strong> <span id="modalPhone">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" onclick="editUserFromModal()">
+                        <i class="fas fa-edit me-2"></i> تعديل
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-dark">
+              <h5 class="modal-title" id="editUserModalLabel">تعديل بيانات المستخدم</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editUserForm">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">اسم المستخدم</label>
+                    <input type="text" id="editUsername" class="form-control" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input type="email" id="editEmail" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="text" id="editPhone" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">نوع المستخدم</label>
+                    <select id="editRole" class="form-select">
+                      <option value="admin">مدير النظام</option>
+                      <option value="admin2">نائب مدير</option>
+                      <option value="employee">موظف</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">الحالة</label>
+                    <select id="editStatus" class="form-select">
+                      <option value="active">نشط</option>
+                      <option value="inactive">غير نشط</option>
+                    </select>
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <label class="form-label">كلمة المرور الجديدة</label>
+                    <input type="text" id="editPassword" class="form-control" placeholder="اتركه فارغاً إذا لا تريد التغيير">
+                  </div>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" onclick="submitEditUser()">حفظ التعديلات</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">تأكيد العملية</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="modal-icon mb-3" id="confirmModalIcon">
+                            <i class="fas fa-question-circle" style="font-size: 3rem; color: var(--warning-color);"></i>
+                        </div>
+                        <div id="confirmModalMessage">هل أنت متأكد من هذه العملية؟</div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmButton">نعم، متأكد</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalUsers = document.getElementById('totalUsers')
+            const adminUsers = document.getElementById('adminUsers')
+            const activeUsers = document.getElementById('activeUsers')
+            fetch('/api/user-count')
+  .then(response => response.json())
+  .then(data => {
+    totalUsers.textContent = data.count;
+  })
+            fetch('/api/adminUser')
+  .then(response => response.json())
+  .then(data => {
+    adminUsers.textContent = data.count;
+  })
+            fetch('/api/activeUsers')
+  .then(response => response.json())
+  .then(data => {
+    activeUsers.textContent = data.count;
+  })
+            const navToggle = document.getElementById('navToggle');
+            const floatingNav = document.getElementById('floatingNav');
+            
+            // Navigation toggle functionality
+            navToggle.addEventListener('click', function() {
+                floatingNav.classList.toggle('show');
+                
+                const icon = navToggle.querySelector('i');
+                if (floatingNav.classList.contains('show')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Close floating nav when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navToggle.contains(event.target) && !floatingNav.contains(event.target)) {
+                    floatingNav.classList.remove('show');
+                    const icon = navToggle.querySelector('i');
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Initialize search functionality
+            document.getElementById('searchUsers').addEventListener('input', searchUsers);
+            document.getElementById('filterRole').addEventListener('change', searchUsers);
+            document.getElementById('filterStatus').addEventListener('change', searchUsers);
+
+            // Password confirmation validation
+            document.getElementById('confirmPassword').addEventListener('blur', function() {
+                const password = document.getElementById('password').value;
+                const confirmPassword = this.value;
+                
+                if (password && confirmPassword && password !== confirmPassword) {
+                    this.classList.add('is-invalid');
+                    showValidationMessage(this, 'كلمات المرور غير متطابقة');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+
+        function addUser() {
+  const user = {
+    username: document.getElementById('username').value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value,
+    userRole: document.getElementById('userRole').value,
+    number: document.getElementById('number').value,
+    userStatus: document.getElementById('userStatus').value
+  };
+console.log(user);
+  fetch('/api/addUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('فشل الإضافة');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert('تمت إضافة المستخدم بنجاح');
+      document.getElementById('addUserForm').reset();
+    })
+    .catch(error => {
+      alert('حدث خطأ: ' + error.message);
+    });
+}
+
+function validateUserForm() {
+    const username = document.getElementById('username');
+    const fullName = document.getElementById('fullName');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const userRole = document.getElementById('userRole');
+
+    let isValid = true;
+
+    if (!username.value.trim()) {
+        showValidationMessage(username, 'اسم المستخدم مطلوب');
+        isValid = false;
+    }
+
+    if (!fullName.value.trim()) {
+        showValidationMessage(fullName, 'الاسم الكامل مطلوب');
+        isValid = false;
+    }
+
+    if (!email.value.trim() || !isValidEmail(email.value)) {
+        showValidationMessage(email, 'البريد الإلكتروني غير صحيح');
+        isValid = false;
+    }
+
+    if (!password.value || password.value.length < 6) {
+        showValidationMessage(password, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+        isValid = false;
+    }
+
+    if (password.value !== confirmPassword.value) {
+        showValidationMessage(confirmPassword, 'كلمات المرور غير متطابقة');
+        isValid = false;
+    }
+
+    if (!userRole.value) {
+        showValidationMessage(userRole, 'نوع المستخدم مطلوب');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function isValidEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function showValidationMessage(element, message) {
+    element.classList.add('is-invalid');
+
+    let feedback = element.parentNode.querySelector('.invalid-feedback');
+    if (!feedback) {
+        feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        element.parentNode.appendChild(feedback);
+    }
+    feedback.textContent = message;
+}
+function showErrorAlert(message) {
+    alert(message); // نفس الشيء هنا
+}
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
+            const roleFilter = document.getElementById('filterRole').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            const tableBody = document.getElementById('usersTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const username = row.cells[0].textContent.toLowerCase();
+                const fullName = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+                const role = row.cells[3].textContent.toLowerCase();
+                const status = row.cells[4].textContent.toLowerCase();
+                
+                let showRow = true;
+                
+                // Search filter
+                if (searchTerm && !username.includes(searchTerm) && 
+                    !fullName.includes(searchTerm) && 
+                    !email.includes(searchTerm)) {
+                    showRow = false;
+                }
+                
+                // Role filter
+                if (roleFilter && !role.includes(roleFilter)) {
+                    showRow = false;
+                }
+                
+                // Status filter
+                if (statusFilter && !status.includes(statusFilter)) {
+                    showRow = false;
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+            }
+        }
+        const phoneInput = document.getElementById('number');
+
+phoneInput.addEventListener('input', () => {
+  if (!phoneInput.value.startsWith('+9')) {
+    phoneInput.value = '+9';
+  }
+});
+
+phoneInput.addEventListener('keydown', function(e) {
+  // منع حذف أو التراجع في أول خانتين
+  const cursorPos = phoneInput.selectionStart;
+  if ((cursorPos <= 2) && (e.key === 'Backspace' || e.key === 'Delete')) {
+    e.preventDefault();
+  }
+});
+     
+async function fetchUsers() {
+    try {
+      const response = await fetch('/api/getAllUsers'); // تأكد أن المسار صحيح
+      const users = await response.json();
+
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = ''; // امسح المحتوى القديم
+
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        // تحديد لون شارة الدور
+        let roleBadge = '';
+        switch (user.role) {
+          case 'admin': roleBadge = 'bg-danger'; break;
+          case 'employee': roleBadge = 'bg-primary'; break;
+          case 'admin2': roleBadge = 'bg-warning'; break;
+          default: roleBadge = 'bg-secondary';
+        }
+
+        // شارة الحالة
+        const statusBadge = user.state === 'active' ? 'bg-success' : 'bg-danger';
+
+        row.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td><span class="badge ${roleBadge}">${getRoleName(user.role)}</span></td>
+          <td><span class="badge ${statusBadge}">${user.state === 'active' ? 'نشط' : 'غير نشط'}</span></td>
+          <td>${formatDate(user.created_at)}</td>
+          <td>${user.number || '—'}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" onclick='viewUser(${JSON.stringify(user)})'><i class="fas fa-eye"></i></button>
+            <button class="btn btn-sm btn-warning me-1"
+      data-username="${user.username}"
+      data-email="${user.email || ''}"
+      data-phone="${user.number || ''}"
+      data-role="${user.role}"
+      data-status="${user.state}"
+      data-password="${user.password}"
+      onclick="openEditUserModal(this)" title="تعديل">
+      <i class="fas fa-edit"></i>
+    </button>
+            <button class="btn btn-sm btn-info me-1" onclick="resetPassword('${user.username}')" title="إعادة تعيين كلمة المرور"><i class="fas fa-key"></i></button>
+            <button class="btn btn-sm btn-secondary" onclick="toggleUserStatus('${user.username}')" title="تغيير الحالة">
+              <i class="fas fa-toggle-${user.state === 'active' ? 'on' : 'off'}"></i>
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('فشل في جلب بيانات المستخدمين:', error);
+    }
+  }
+
+  // تحويل نوع المستخدم من قاعدة البيانات إلى اسم عربي
+  function getRoleName(role) {
+    switch (role) {
+      case 'admin': return 'مدير النظام';
+      case 'employee': return 'موظف';
+      case 'admin2': return 'نائب مدير';
+      default: return role;
+    }
+  }
+
+  // تنسيق التاريخ yyyy-mm-dd فقط
+  function formatDate(dateString) {
+    if (!dateString) return '—';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  }
+
+  // تحميل البيانات عند فتح الصفحة
+  window.addEventListener('DOMContentLoaded', fetchUsers);
+  function viewUser(user) {
+  document.getElementById('modalUsername').textContent = user.username;
+  document.getElementById('modalEmail').textContent = user.email || '—';
+  document.getElementById('modalRole').textContent = getRoleName(user.role);
+  document.getElementById('modalStatus').textContent = user.state === 'active' ? 'نشط' : 'غير نشط';
+  document.getElementById('modalCreated').textContent = formatDate(user.created_at);
+  document.getElementById('modalPhone').textContent = user.number || '—'; 
+
+  const modal = new bootstrap.Modal(document.getElementById('userModal'));
+  modal.show();
+}
+
+function openEditUserModal(button) {
+  document.getElementById('editUsername').value = button.dataset.username || '';
+  document.getElementById('editEmail').value = button.dataset.email || '';
+  document.getElementById('editPhone').value = button.dataset.phone || '';
+  document.getElementById('editRole').value = button.dataset.role || 'employee';
+  document.getElementById('editStatus').value = button.dataset.status || 'active';
+  document.getElementById('editPassword').value = button.dataset.password; 
+
+  const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+  modal.show();
+}
+
+
+
+        function editUserFromModal() {
+            const username = document.getElementById('modalUsername').textContent;
+  const email = document.getElementById('modalEmail').textContent;
+  const role = document.getElementById('modalRole').textContent;
+  const phone = document.getElementById('modalPhone').textContent;
+  const status = document.getElementById('modalStatus').textContent;
+
+  // املأ النموذج في modal التعديل
+  document.getElementById('editUsername').value = username;
+  document.getElementById('editEmail').value = email;
+  document.getElementById('editRole').value = role;
+  document.getElementById('editPhone').value = phone;
+  document.getElementById('editStatus').value = status;
+
+  // عرض مودال التعديل
+  const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+  editModal.show();
+        }
+
+        function resetPassword(username) {
+    showConfirmModal(
+        'إعادة تعيين كلمة المرور',
+        `هل أنت متأكد من إعادة تعيين كلمة المرور للمستخدم ${username}؟`,
+        'fas fa-key',
+        'warning',
+        function () {
+            fetch(`/api/users/${encodeURIComponent(username)}/reset-password`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: '12345' }) // كلمة المرور الجديدة الافتراضية
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('فشل في إعادة تعيين كلمة المرور');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showSuccessAlert('تم إعادة تعيين كلمة المرور بنجاح');
+            })
+            .catch(error => {
+                console.error(error);
+                showErrorAlert('حدث خطأ أثناء إعادة تعيين كلمة المرور');
+            });
+        }
+    );
+}
+        async function submitEditUser() {
+  const username = document.getElementById('editUsername').value;
+  const fullName = document.getElementById('editUsername').value;
+  const email = document.getElementById('editEmail').value;
+  const phone = document.getElementById('editPhone').value;
+  const role = document.getElementById('editRole').value;
+  const state = document.getElementById('editStatus').value;
+  const password = document.getElementById('editPassword').value;
+
+  try {
+    const response = await fetch(`/api/users/${username}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        fullName,
+        phone,
+        role,
+        state,
+        password  // لا ترسلها إن لم يتم تغييرها إلا إذا كان ضروريًا
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('فشل التحديث');
+    }
+
+    const result = await response.json();
+    console.log('تم التحديث:', result);
+
+    // إغلاق المودال
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+    modal.hide();
+
+    // تحديث الجدول
+    fetchUsers();
+
+  } catch (error) {
+    console.error('حدث خطأ أثناء التحديث:', error);
+    alert('فشل في حفظ التعديلات.');
+  }
+}
+function toggleUserStatus(username) {
+    showConfirmModal(
+        'تغيير حالة المستخدم',
+        `هل أنت متأكد من تغيير حالة المستخدم ${username}؟`,
+        'fas fa-toggle-on',
+        'info',
+        function () {
+            fetch(`/api/users/${encodeURIComponent(username)}/toggle-status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('فشل في تغيير الحالة');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // showSuccessAlert(`تم تغيير الحالة إلى: ${data.newStatus}`);
+            })
+            .catch(error => {
+                console.error(error);
+                showErrorAlert('حدث خطأ أثناء تغيير حالة المستخدم');
+            });
+        }
+    );
+}
+
+        function deleteUser(username) {
+            showConfirmModal(
+                'حذف المستخدم',
+                `هل أنت متأكد من حذف المستخدم ${username}؟ لا يمكن التراجع عن هذه العملية.`,
+                'fas fa-trash',
+                'danger',
+                function() {
+                    showSuccessAlert('تم حذف المستخدم بنجاح');
+                    updateStatistics();
+                }
+            );
+        }
+
+
+
+        function showConfirmModal(title, message, iconClass, iconType, onConfirm) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalMessage').textContent = message;
+            
+            const iconElement = document.getElementById('confirmModalIcon');
+            iconElement.innerHTML = `<i class="${iconClass}" style="font-size: 3rem; color: var(--${iconType}-color);"></i>`;
+            
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.onclick = function() {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+
+       
+    </script>
+</body>
+</html>
+

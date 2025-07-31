@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الإجازات المرضية - النسخ الاحتياطي</title>
+    
+    <!-- Bootstrap 5.3 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Modern Styles -->
+    <link href="css/sahacss/modern-styles.css" rel="stylesheet">
+    <!-- Responsive Styles -->
+    <link href="responsive-styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <%- include ('./nav/nav') %>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Page Header -->
+            <div class="welcome-section fade-in mb-4">
+                <div class="welcome-header">
+                    <h2>
+                        <i class="fas fa-cloud-upload-alt me-2"></i>
+                        النسخ الاحتياطي
+                    </h2>
+                    <p class="mb-0">إدارة النسخ الاحتياطية لقاعدة البيانات والملفات</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center fade-in">
+                        <div class="card-body">
+                            <i class="fas fa-plus-circle text-primary mb-3" style="font-size: 3rem;"></i>
+                            <h5>إنشاء نسخة احتياطية</h5>
+                            <button class="btn btn-primary" onclick="createBackup()">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                إنشاء الآن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center fade-in">
+                        <div class="card-body">
+                            <i class="fas fa-download text-success mb-3" style="font-size: 3rem;"></i>
+                            <h5>استعادة النسخة</h5>
+                            <button class="btn btn-success" onclick="restoreBackup()">
+                                <i class="fas fa-undo me-2"></i>
+                                استعادة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center fade-in">
+                        <div class="card-body">
+                            <i class="fas fa-clock text-warning mb-3" style="font-size: 3rem;"></i>
+                            <h5>جدولة النسخ</h5>
+                            <button class="btn btn-warning" onclick="scheduleBackup()">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                جدولة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center fade-in">
+                        <div class="card-body">
+                            <i class="fas fa-cog text-info mb-3" style="font-size: 3rem;"></i>
+                            <h5>إعدادات النسخ</h5>
+                            <button class="btn btn-info" onclick="backupSettings()">
+                                <i class="fas fa-cogs me-2"></i>
+                                إعدادات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Statistics -->
+            <div class="stats-grid slide-up mb-4">
+                <div class="stat-card">
+                    <div class="number" id="totalBackups">24</div>
+                    <div class="title">إجمالي النسخ</div>
+                    <div class="change positive">
+                        <i class="fas fa-arrow-up"></i> +3 من الشهر الماضي
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="successfulBackups">22</div>
+                    <div class="title">نسخ ناجحة</div>
+                    <div class="change positive">
+                        <i class="fas fa-arrow-up"></i> +2 من الأسبوع الماضي
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="lastBackupSize">2.4 GB</div>
+                    <div class="title">حجم آخر نسخة</div>
+                    <div class="change neutral">
+                        <i class="fas fa-minus"></i> لا تغيير
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="totalSize">58.7 GB</div>
+                    <div class="title">الحجم الإجمالي</div>
+                    <div class="change positive">
+                        <i class="fas fa-arrow-up"></i> +2.4 GB من الأمس
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup List -->
+            <div class="card scale-in">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        قائمة النسخ الاحتياطية
+                    </h4>
+                    <div>
+                        <button type="button" class="btn btn-danger me-2" onclick="cleanupOldBackups()">
+                            <i class="fas fa-trash me-2"></i>
+                            تنظيف النسخ القديمة
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="refreshBackupList()">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            تحديث القائمة
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="backupTable">
+                            <thead>
+                                <tr>
+                                    <th>اسم النسخة</th>
+                                    <th>تاريخ الإنشاء</th>
+                                    <th>الحجم</th>
+                                    <th>النوع</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="backupTableBody">
+                                <tr>
+                                    <td>backup_2024_01_21_10_30.sql</td>
+                                    <td>2024-01-21 10:30:15</td>
+                                    <td>2.4 GB</td>
+                                    <td><span class="badge bg-primary">تلقائي</span></td>
+                                    <td><span class="badge bg-success">مكتمل</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success me-1" onclick="downloadBackup('backup_2024_01_21_10_30.sql')" title="تحميل">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning me-1" onclick="restoreFromBackup('backup_2024_01_21_10_30.sql')" title="استعادة">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-info me-1" onclick="verifyBackup('backup_2024_01_21_10_30.sql')" title="التحقق">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteBackup('backup_2024_01_21_10_30.sql')" title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>backup_2024_01_20_02_00.sql</td>
+                                    <td>2024-01-20 02:00:00</td>
+                                    <td>2.3 GB</td>
+                                    <td><span class="badge bg-info">مجدول</span></td>
+                                    <td><span class="badge bg-success">مكتمل</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success me-1" onclick="downloadBackup('backup_2024_01_20_02_00.sql')" title="تحميل">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning me-1" onclick="restoreFromBackup('backup_2024_01_20_02_00.sql')" title="استعادة">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-info me-1" onclick="verifyBackup('backup_2024_01_20_02_00.sql')" title="التحقق">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteBackup('backup_2024_01_20_02_00.sql')" title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>backup_2024_01_19_15_45.sql</td>
+                                    <td>2024-01-19 15:45:30</td>
+                                    <td>2.2 GB</td>
+                                    <td><span class="badge bg-secondary">يدوي</span></td>
+                                    <td><span class="badge bg-warning">جاري التحقق</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success me-1" onclick="downloadBackup('backup_2024_01_19_15_45.sql')" title="تحميل" disabled>
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning me-1" onclick="restoreFromBackup('backup_2024_01_19_15_45.sql')" title="استعادة" disabled>
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-info me-1" onclick="verifyBackup('backup_2024_01_19_15_45.sql')" title="التحقق">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteBackup('backup_2024_01_19_15_45.sql')" title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Progress Modal -->
+            <div class="modal fade" id="backupProgressModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">جاري إنشاء النسخة الاحتياطية</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-cloud-upload-alt text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 0%" id="backupProgress"></div>
+                            </div>
+                            <div class="text-center">
+                                <span id="backupStatus">بدء العملية...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const floatingNav = document.getElementById('floatingNav');
+            
+            // Navigation toggle functionality
+            navToggle.addEventListener('click', function() {
+                floatingNav.classList.toggle('show');
+                
+                const icon = navToggle.querySelector('i');
+                if (floatingNav.classList.contains('show')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Close floating nav when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navToggle.contains(event.target) && !floatingNav.contains(event.target)) {
+                    floatingNav.classList.remove('show');
+                    const icon = navToggle.querySelector('i');
+                    icon.className = 'fas fa-bars';
+                }
+            });
+        });
+
+        function createBackup() {
+    showConfirmModal(
+      'إنشاء نسخة احتياطية',
+      'هل أنت متأكد من أنك تريد إنشاء نسخة احتياطية الآن؟',
+      'fas fa-cloud-upload-alt',
+      'primary',
+      async function () {
+        try {
+          const response = await fetch('/api/backup', {
+            method: 'POST',
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showSuccessAlert(data.message || 'تم إنشاء النسخة الاحتياطية بنجاح');
+
+            // Optionally download the backup file
+            if (data.downloadUrl) {
+              window.open(data.downloadUrl, '_blank');
+            }
+          } else {
+            showErrorAlert(data.message || 'حدث خطأ أثناء إنشاء النسخة الاحتياطية');
+          }
+        } catch (error) {
+          console.error(error);
+          showErrorAlert('فشل الاتصال بالخادم');
+        }
+      }
+    );
+  }
+
+        function simulateBackupProgress() {
+            const progressBar = document.getElementById('backupProgress');
+            const statusText = document.getElementById('backupStatus');
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                
+                if (progress < 30) {
+                    statusText.textContent = 'جاري تحضير البيانات...';
+                } else if (progress < 60) {
+                    statusText.textContent = 'جاري ضغط البيانات...';
+                } else if (progress < 90) {
+                    statusText.textContent = 'جاري حفظ النسخة...';
+                } else if (progress >= 100) {
+                    statusText.textContent = 'تم إنشاء النسخة الاحتياطية بنجاح!';
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('backupProgressModal'));
+                        modal.hide();
+                        showSuccessAlert('تم إنشاء النسخة الاحتياطية بنجاح');
+                        refreshBackupList();
+                    }, 2000);
+                }
+            }, 500);
+        }
+
+        function restoreBackup() {
+            showConfirmModal(
+                'استعادة النسخة الاحتياطية',
+                'هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال البيانات الحالية.',
+                'fas fa-undo',
+                'warning',
+                function() {
+                    showSuccessAlert('تم بدء عملية الاستعادة بنجاح');
+                }
+            );
+        }
+
+        function scheduleBackup() {
+            showSuccessAlert('تم فتح إعدادات الجدولة');
+        }
+
+        function backupSettings() {
+            window.location.href = 'settings_modern.html';
+        }
+
+        function downloadBackup(filename) {
+            showSuccessAlert(`جاري تحميل ${filename}`);
+        }
+
+        function restoreFromBackup(filename) {
+            showConfirmModal(
+                'استعادة من النسخة',
+                `هل أنت متأكد من استعادة النسخة ${filename}؟`,
+                'fas fa-undo',
+                'warning',
+                function() {
+                    showSuccessAlert('تم بدء عملية الاستعادة بنجاح');
+                }
+            );
+        }
+
+        function verifyBackup(filename) {
+            showSuccessAlert(`جاري التحقق من سلامة ${filename}`);
+        }
+
+        function deleteBackup(filename) {
+            showConfirmModal(
+                'حذف النسخة الاحتياطية',
+                `هل أنت متأكد من حذف النسخة ${filename}؟ لا يمكن التراجع عن هذه العملية.`,
+                'fas fa-trash',
+                'danger',
+                function() {
+                    showSuccessAlert('تم حذف النسخة الاحتياطية بنجاح');
+                    refreshBackupList();
+                }
+            );
+        }
+
+        function cleanupOldBackups() {
+            showConfirmModal(
+                'تنظيف النسخ القديمة',
+                'هل أنت متأكد من حذف النسخ الاحتياطية القديمة؟',
+                'fas fa-trash',
+                'warning',
+                function() {
+                    showSuccessAlert('تم تنظيف النسخ القديمة بنجاح');
+                    refreshBackupList();
+                }
+            );
+        }
+
+        function refreshBackupList() {
+            showSuccessAlert('تم تحديث قائمة النسخ الاحتياطية');
+        }
+
+        function showConfirmModal(title, message, iconClass, iconType, onConfirm) {
+            // Create and show confirmation modal
+            const modalHtml = `
+                <div class="modal fade" id="tempConfirmModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${title}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div class="modal-icon mb-3">
+                                    <i class="${iconClass}" style="font-size: 3rem; color: var(--${iconType}-color);"></i>
+                                </div>
+                                <div>${message}</div>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-danger" id="tempConfirmButton">نعم، متأكد</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('tempConfirmModal'));
+            
+            document.getElementById('tempConfirmButton').onclick = function() {
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            
+            modal.show();
+            
+            // Remove modal after hiding
+            document.getElementById('tempConfirmModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+
+        function showSuccessAlert(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
