@@ -7,6 +7,7 @@ const pool = new Pool({
     rejectUnauthorized: false, // Required for Render
   },
 });
+// const pool = require('../../connection/addLeaveConnection/addLeaveConnection')
 const fs = require('fs');
 const path = require('path');
 const fontkit = require('fontkit');
@@ -273,7 +274,7 @@ exports.deleteLeave =  async (req, res) => {
   };
 
   const formImagePath = path.join(__dirname, './sick_leave_434.jpg');
-  const arabicFontPath = path.join(__dirname, './tahoma.ttf');
+  const arabicFontPath = path.join(__dirname, './fonts/tahoma.ttf');
   
   exports.downloadLeavePdf = async (req, res) => {
     const { leaveId } = req.params;
