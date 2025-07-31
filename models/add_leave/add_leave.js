@@ -273,7 +273,7 @@ exports.deleteLeave =  async (req, res) => {
   };
 
   const formImagePath = path.join(__dirname, './sick_leave_434.jpg');
-  const arabicFontPath = path.join(__dirname, './fonts/TheYearofTheCamel-ExtraBold.otf');
+  const arabicFontPath = path.join(__dirname, './tahoma.ttf');
   
   exports.downloadLeavePdf = async (req, res) => {
     const { leaveId } = req.params;
