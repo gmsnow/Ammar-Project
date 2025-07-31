@@ -1,4 +1,12 @@
-const pool = require('../../connection/addLeaveConnection/addLeaveConnection')
+require('dotenv').config();
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Render
+  },
+});
 const fs = require('fs');
 const path = require('path');
 const fontkit = require('fontkit');

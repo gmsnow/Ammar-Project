@@ -1,7 +1,14 @@
 const jwt = require('jsonwebtoken');
-const { Pool } = require('pg');
+
 require('dotenv').config();
-const pool = require('../../connection/usersConnection/userConnection');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Render
+  },
+});
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
