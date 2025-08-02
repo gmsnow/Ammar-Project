@@ -341,8 +341,8 @@ exports.deleteLeave =  async (req, res) => {
       const dates = dateRange.split('إلى').map(s => s.trim());
       const firstDate = dates[0] || "";
       const secondDate = dates[1] || "";
-      drawRtlText(dayCount, 710, 870, { color: whiteColor, size: 13 });
-      drawRtlText(onlyYawm, 690, 870, { color: whiteColor, size: 13 });
+      drawRtlText(dayCount, 722, 870, { color: whiteColor, size: 13 });
+      drawRtlText(onlyYawm, 705, 870, { color: whiteColor, size: 13 });
       drawRtlText(onlyIla, 605, 870, { color: whiteColor, size: 13 });
       drawRtlText(`(${firstDate}      ${secondDate})`, 535, 870, { color: whiteColor, size: 13 });
       const date = new Date(data.admission_date);
