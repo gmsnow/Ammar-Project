@@ -5,7 +5,7 @@ function authenticateToken(req, res, next) {
   const token = req.cookies.token; // 🔄 get token from cookie
 
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized - No token provided' });
+    return res.status(401).sendFile(__dirname + '/unauthorized.html')
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {

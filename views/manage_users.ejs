@@ -187,7 +187,33 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="successModalLabel">نجاح</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+          </div>
+          <div class="modal-body" id="successModalBody">
+            <!-- سيتم تعبئة الرسالة هنا -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="errorModalLabel">خطأ</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+      <div class="modal-body" id="errorModalBody">
+        <!-- يتم تعبئة الرسالة تلقائياً -->
+      </div>
+    </div>
+  </div>
+</div>
     <!-- User Details Modal -->
     <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -298,6 +324,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+     function showSuccessAlert(message) {
+    const modalBody = document.getElementById('successModalBody');
+    modalBody.textContent = message;
+
+    const successModalEl = document.getElementById('successModal');
+    const successModal = new bootstrap.Modal(successModalEl);
+    // إظهار المودال
+    successModal.show();
+
+    // إغلاق المودال بعد ثانيتين
+    setTimeout(() => {
+      successModal.hide();
+    }, 2000);
+  }
+  function showErrorAlert(message) {
+    const modalBody = document.getElementById('errorModalBody');
+    modalBody.textContent = message;
+
+    const errorModalEl = document.getElementById('errorModal');
+    const errorModal = new bootstrap.Modal(errorModalEl);
+
+    // عرض المودال
+    errorModal.show();
+
+    // إغلاق بعد ثانيتين
+    setTimeout(() => {
+      errorModal.hide();
+    }, 2000);
+  }
         document.addEventListener('DOMContentLoaded', function() {
             const totalUsers = document.getElementById('totalUsers')
             const adminUsers = document.getElementById('adminUsers')
@@ -384,11 +439,11 @@ console.log(user);
       return response.json();
     })
     .then(data => {
-      alert('تمت إضافة المستخدم بنجاح');
+      showSuccessAlert('تمت إضافة المستخدم بنجاح');
       document.getElementById('addUserForm').reset();
     })
     .catch(error => {
-      alert('حدث خطأ: ' + error.message);
+      showErrorAlert('حدث خطأ: ' + error.message);
     });
 }
 
@@ -452,7 +507,7 @@ function showValidationMessage(element, message) {
     feedback.textContent = message;
 }
 function showErrorAlert(message) {
-    alert(message); // نفس الشيء هنا
+  showErrorAlert(message); // نفس الشيء هنا
 }
         function searchUsers() {
             const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
@@ -698,7 +753,7 @@ function openEditUserModal(button) {
 
   } catch (error) {
     console.error('حدث خطأ أثناء التحديث:', error);
-    alert('فشل في حفظ التعديلات.');
+    showErrorAlert('فشل في حفظ التعديلات.');
   }
 }
 function toggleUserStatus(username) {
@@ -721,7 +776,7 @@ function toggleUserStatus(username) {
                 return response.json();
             })
             .then(data => {
-                // showSuccessAlert(`تم تغيير الحالة إلى: ${data.newStatus}`);
+              showSuccessAlert(`تم تغيير الحالة إلى: ${data.newStatus}`);
             })
             .catch(error => {
                 console.error(error);
@@ -739,7 +794,6 @@ function toggleUserStatus(username) {
                 'danger',
                 function() {
                     showSuccessAlert('تم حذف المستخدم بنجاح');
-                    updateStatistics();
                 }
             );
         }

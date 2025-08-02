@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+ 
     <style>
         :root {
             --primary-color: #1a5f7a;
@@ -202,121 +202,122 @@
 
         /* Floating Navigation Menu */
         .floating-nav {
-            position: fixed;
-            top: 50%;
-            right: 100px;
-            transform: translateY(-50%) translateX(100%);
-            z-index: 1035;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-heavy);
-            padding: 20px;
-            min-width: 280px;
-            transition: var(--transition);
-            opacity: 0;
-            visibility: hidden;
-        }
+    position: fixed;
+    top: 50%;
+    right: 100px;
+    transform: translateY(-50%) translateX(100%);
+    z-index: calc(var(--z-fixed) + 5);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-2xl);
+    padding: var(--spacing-xl);
+    min-width: 320px;
+    transition: var(--transition-normal);
+    opacity: 0;
+    visibility: hidden;
+    backdrop-filter: blur(20px);
+}
 
-        .floating-nav.show {
-            transform: translateY(-50%) translateX(0);
-            opacity: 1;
-            visibility: visible;
-        }
+.floating-nav.show {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
 
-        .floating-nav::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(26, 95, 122, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(52, 152, 219, 0.1) 0%, transparent 50%);
-            border-radius: var(--border-radius-lg);
-            z-index: -1;
-        }
+.floating-nav-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-light);
+    position: relative;
+}
 
-        .floating-nav-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(26, 95, 122, 0.1);
-        }
+.floating-nav-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: var(--bg-gradient-primary);
+    border-radius: var(--radius-full);
+}
 
-        .floating-nav-header h5 {
-            margin: 0;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
+.floating-nav-header h5 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-family: 'Cairo', sans-serif;
+}
 
-        .floating-nav-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+.floating-nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-        .floating-nav-menu .menu-section {
-            padding: 10px 0;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(26, 95, 122, 0.1);
-            margin-bottom: 10px;
-        }
+.floating-nav-menu .menu-section {
+    padding: var(--spacing-md) 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: var(--spacing-md);
+    font-family: 'Cairo', sans-serif;
+}
 
-        .floating-nav-menu .menu-item {
-            display: block;
-            padding: 12px 15px;
-            color: var(--text-dark);
-            text-decoration: none;
-            transition: var(--transition);
-            border-radius: var(--border-radius);
-            margin: 5px 0;
-            position: relative;
-            overflow: hidden;
-        }
+.floating-nav-menu .menu-item {
+    display: block;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition-normal);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-sm) 0;
+    font-family: 'Cairo', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
 
-        .floating-nav-menu .menu-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 100%;
-            background: var(--gradient-primary);
-            transition: var(--transition);
-            z-index: -1;
-            border-radius: var(--border-radius);
-        }
+.floating-nav-menu .menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-gradient-primary);
+    transform: translateX(-100%);
+    transition: var(--transition-normal);
+    z-index: -1;
+}
 
-        .floating-nav-menu .menu-item:hover::before {
-            width: 100%;
-        }
+.floating-nav-menu .menu-item:hover::before {
+    transform: translateX(0);
+}
 
-        .floating-nav-menu .menu-item:hover {
-            color: var(--text-white);
-            transform: translateX(-5px);
-            box-shadow: var(--shadow-medium);
-        }
+.floating-nav-menu .menu-item:hover {
+    color: var(--text-white);
+    transform: translateX(-5px);
+    box-shadow: var(--shadow-colored);
+}
 
-        .floating-nav-menu .menu-item.active {
-            background: var(--gradient-primary);
-            color: var(--text-white);
-            box-shadow: var(--shadow-medium);
-        }
+.floating-nav-menu .menu-item.active {
+    background: var(--bg-gradient-primary);
+    color: var(--text-white);
+    box-shadow: var(--shadow-colored);
+}
 
-        .floating-nav-menu .menu-item i {
-            width: 20px;
-            margin-left: 12px;
-            font-size: 1.1rem;
-        }
+.floating-nav-menu .menu-item i {
+    width: 20px;
+    margin-left: var(--spacing-md);
+    font-size: 1.125rem;
+}
 
         /* Main Content */
         .main-content {
@@ -760,10 +761,7 @@
                 right: 75px;
             }
             
-            .floating-nav-menu .menu-item {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
+         
         }
 
         /* Tablet (768px - 991px) */
@@ -802,16 +800,9 @@
                 margin-bottom: 15px;
             }
             
-            .floating-nav {
-                right: 70px;
-                min-width: 220px;
-                padding: 15px;
-            }
+      
             
-            .floating-nav-menu .menu-item {
-                padding: 8px 10px;
-                font-size: 0.85rem;
-            }
+         
         }
 
         /* Mobile Large (576px - 767px) */
@@ -856,18 +847,7 @@
                 margin-bottom: 12px;
             }
             
-            .floating-nav {
-                right: 60px;
-                min-width: 200px;
-                padding: 12px;
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-            
-            .floating-nav-menu .menu-item {
-                padding: 6px 8px;
-                font-size: 0.8rem;
-            }
+ 
             
             .header {
                 padding: 15px 0;
@@ -920,17 +900,9 @@
                 margin-bottom: 10px;
             }
             
-            .floating-nav {
-                right: 55px;
-                min-width: 180px;
-                padding: 10px;
-            }
+     
             
-            .floating-nav-menu .menu-item {
-                padding: 5px 6px;
-                font-size: 0.75rem;
-            }
-            
+        
             .header {
                 padding: 10px 0;
             }
@@ -986,11 +958,7 @@
                 min-width: 160px;
                 padding: 8px;
             }
-            
-            .floating-nav-menu .menu-item {
-                padding: 4px 5px;
-                font-size: 0.7rem;
-            }
+ 
             
             .header h1 {
                 font-size: 1.1rem;
@@ -1833,7 +1801,7 @@ showPrintConfirmModal(
             
             // Save to localStorage for print preview
             
-            return fetch('https://ammar-project.onrender.com/api/save-leave', {
+            return fetch('/api/save-leave', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

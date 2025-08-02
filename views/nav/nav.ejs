@@ -27,6 +27,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/manage_leaves">إدارة الإجازات المرضية</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/quary">الاستعلام عن الاجازات المرضية</a>
+        </li>
       </ul>
     </div>
   </header>
@@ -56,15 +59,15 @@
             <i class="fas fa-th-large"></i>
        اداره الإجازات المرضيه
         </a>
-        <!-- <a href="#health-certificates" class="menu-item">
+        <a href="#" class="menu-item">
             <i class="fas fa-file-medical"></i>
             الشهادات الصحية
         </a>
-        <a href="#operation-cards" class="menu-item">
+        <a href="#" class="menu-item">
             <i class="fas fa-file-alt"></i>
             بطاقات التشغيل
         </a>
-         -->
+        
         <li class="menu-section">إدارة النظام</li>
         <a href="/manage_users" class="menu-item">
             <i class="fas fa-users"></i>
@@ -88,9 +91,21 @@
         </a>
     </ul>
 </nav>
-
+<!-- <button class="theme-toggle" onclick="toggleTheme()" aria-label="تبديل المظهر">
+  <i class="fas fa-moon" id="theme-icon"></i>
+</button> -->
 <script>
     const user = document.querySelector('.user-name');
     const username = localStorage.getItem('username');
     user.textContent = username;
+    const currentPath = window.location.pathname;
+
+// لكل عنصر رابط في القوائم
+document.querySelectorAll('.nav-link, .menu-item').forEach(link => {
+  if (link.getAttribute('href') === currentPath) {
+    link.classList.add('active');
+  } else {
+    link.classList.remove('active');
+  }
+});
 </script>

@@ -3,21 +3,22 @@ const router = express.Router();
 const Controller = require('../controllers/controller');
 const userModel = require('../models/users/users')
 const add_leaveModel = require('../models/add_leave/add_leave')
+const backupModel = require('../models/backups/backupModel')
 const {authenticateToken, adminOnly }  = require('../middleware/auth');
 router.get('/', Controller.logout);
 router.get('/dashboard',authenticateToken, adminOnly, Controller.Home);
-router.get('/dashboardUser', Controller.dashboardUser);
+router.get('/dashboardUser',authenticateToken, Controller.dashboardUser);
 router.get('/add_leave',authenticateToken, adminOnly, Controller.add_leave);
-router.get('/add_leaveUser', Controller.add_leaveUser);
+router.get('/add_leaveUser',authenticateToken, Controller.add_leaveUser);
 router.get('/manage_users', authenticateToken, adminOnly, Controller.manage_users);
 router.get('/manage_leaves', authenticateToken, adminOnly, Controller.manage_leaves);
-router.get('/manage_leavesUser', Controller.manage_leavesUser);
+router.get('/manage_leavesUser',authenticateToken, Controller.manage_leavesUser);
 router.get('/backup',authenticateToken, adminOnly, Controller.backup);
-router.get('/backupUser', Controller.backupUser);
+router.get('/backupUser',authenticateToken, Controller.backupUser);
 router.get('/profile',authenticateToken, adminOnly, Controller.profile);
-router.get('/profileUser', Controller.profileUser);
+router.get('/profileUser',authenticateToken, Controller.profileUser);
 router.get('/settings',authenticateToken, adminOnly, Controller.settings);
-router.get('/settingsUser', Controller.settingsUser);
+router.get('/settingsUser',authenticateToken, Controller.settingsUser);
 router.get('/quary', Controller.quary);
 
 
@@ -35,10 +36,13 @@ router.get('/api/weekly', add_leaveModel.count_week_leaves);
 router.get('/api/adminUser', userModel.adminUser);
 router.get('/api/activeUsers', userModel.activeUsers);
 router.get('/api/getAllUsers', userModel.getAllUsers);
+router.get('/api/backups', backupModel.resbackUp);
+router.get('/api/backup/list', backupModel.resbackUp);
 
 
 //pdf print
 router.get('/download-leave/:leaveId',add_leaveModel.downloadLeavePdf)
+router.get('/api/download/:fileName',backupModel.download)
 
 //put req
 router.put('/api/leave/:id',add_leaveModel.updateLeave)
@@ -56,4 +60,9 @@ router.post('/login', userModel.login)
 router.post('/api/save-leave',add_leaveModel.add_leave)
 router.post('/api/getUser', userModel.getUser);
 router.post('/api/addUser', userModel.addUser);
+router.post('/backup',backupModel.backup)
+// router.post('/restore',backupModel.restore)
+
+
+
 module.exports = router;

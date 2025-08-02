@@ -9,7 +9,7 @@ const pool = new Pool({
     rejectUnauthorized: false, // Required for Render
   },
 });
-
+// const pool = require('../../connection/usersConnection/userConnection')
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     
@@ -24,7 +24,9 @@ exports.login = async (req, res) => {
       if (user.password !== password) {
         return res.status(401).json({ error: 'كلمة السر أو المستخدم خاطئ' });
       }
-  
+      if (user.state !== 'active') {
+        return res.status(403).json({ error: 'هذا الحساب غير نشط. يرجى التواصل مع الإدارة.' });
+      }
       // Generate JWT token
       const token = jwt.sign(
         { email: user.email, role: user.role, username: user.username },
@@ -130,8 +132,6 @@ exports.getAllUsers = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { username } = req.params;
   const { password } = req.body;
-  console.log(password);
-
   try {
     // تأكد من أن المستخدم موجود أولًا
     const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
