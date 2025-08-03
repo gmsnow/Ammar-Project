@@ -110,6 +110,7 @@ exports.add_leave = async (req, res) => {
             `SELECT * FROM leave_requests WHERE leave_id = $1 AND national_id = $2`,
             [code, national_id]
         );
+        console.log(result.rows);
         if (result.rows.length > 0) {
             res.json(result.rows[0]);
         } else {

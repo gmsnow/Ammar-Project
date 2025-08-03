@@ -10,6 +10,7 @@
   <title>صحة - منصة الخدمات الصحية</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
 
   <link rel="stylesheet" href="/css/sahacss/main22.css">
   <link rel="stylesheet" href="css/sahacss/css2.css">
@@ -20,25 +21,25 @@
 </head>
 <style>
 .result-box {
-  border: 1px solid #ccc;
+
   padding: 30px;
-  background-color: rgb(252, 252, 252);
+  background-color: #F7F7F7;
   font-family: 'Tahoma', sans-serif;
   direction: rtl;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 30px auto;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
 
 .result-label {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 19px;
   color: #111;
 }
 
 .result-value {
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 5px;
   color: #333;
 }
@@ -183,12 +184,6 @@
                     <button type="submit" class="btn btn-primary mt-2"><span id="new_btn">استعلام</span> <span id="new_btn2" style='display:none' onclick="window.location.reload()">استعلام جديد</span> </button>
                   </form>
 
-
-                  <div id="new-inquiry-btn" style="display: none;">
-                    <button type="submit" class="btn btn-primary mt-3" >استعلام
-                      جديد</button>
-                  </div>
-
                   <a id="back-btn" class="btn btn-primary mb-3 mt-3" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
                 </div>
               </div>
@@ -266,6 +261,7 @@
   <script>
     const errorBox = document.getElementById("errorBox");
       const resultBox = document.getElementById("resultBox");
+      const newBtn = document.querySelector('.new_btn');
 document.getElementById('employeeForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -298,12 +294,6 @@ document.getElementById('employeeForm').addEventListener('submit', function (e) 
     return response.json();
 })
 .then(data => {
-    if (!data || Object.keys(data).length === 0) {
-        errorBox.style.display = "block";
-        errorBox.innerText = "لم يتم العثور على نتائج.";
-        return;
-    }
-
     document.getElementById("name").textContent = data.name_arabic || "غير متوفر";
     document.getElementById("issue_date").textContent = data.issue_date?.split('T')[0] || "غير متوفر";
     document.getElementById("start_date").textContent = data.admission_date?.split('T')[0] || "غير متوفر";
@@ -312,10 +302,13 @@ document.getElementById('employeeForm').addEventListener('submit', function (e) 
     document.getElementById("doctor").textContent = data.physician_arabic || "غير متوفر";
     document.getElementById("position").textContent = data.position_arabic || "غير متوفر";
     resultBox.style.display = "block";
+    document.getElementById('new_btn').style.display = 'none';
+    document.getElementById('new_btn2').style.display = 'inline';
 })
     .catch(err => {
         console.error(err);
-        errorMessage.innerText = 'حدث خطأ أثناء الاتصال بالخادم.';
+        errorBox.style.display = "block";
+        errorBox.innerText = 'لا يوجد نتائج';
     });
 });
    
